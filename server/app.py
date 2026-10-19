@@ -79,7 +79,7 @@ def create_app(database_uri=None):
     @app.route('/workouts/<int:id>', methods=['GET'])
     def get_workout_by_id(id):
         """Show a single workout with its associated exercises (including reps/sets/duration)."""
-        workout = Workout.query.get(id)
+        workout = db.session.get(Workout, id)
         if not workout:
             return jsonify({
                 "error": "Not Found",
@@ -126,7 +126,7 @@ def create_app(database_uri=None):
     @app.route('/workouts/<int:id>', methods=['DELETE'])
     def delete_workout(id):
         """Delete a workout and cascade remove associated WorkoutExercises."""
-        workout = Workout.query.get(id)
+        workout = db.session.get(Workout, id)
         if not workout:
             return jsonify({
                 "error": "Not Found",
@@ -155,7 +155,7 @@ def create_app(database_uri=None):
     @app.route('/exercises/<int:id>', methods=['GET'])
     def get_exercise_by_id(id):
         """Show an exercise and its associated workouts."""
-        exercise = Exercise.query.get(id)
+        exercise = db.session.get(Exercise, id)
         if not exercise:
             return jsonify({
                 "error": "Not Found",
@@ -210,7 +210,7 @@ def create_app(database_uri=None):
     @app.route('/exercises/<int:id>', methods=['DELETE'])
     def delete_exercise(id):
         """Delete an exercise and cascade remove associated WorkoutExercises."""
-        exercise = Exercise.query.get(id)
+        exercise = db.session.get(Exercise, id)
         if not exercise:
             return jsonify({
                 "error": "Not Found",
@@ -236,14 +236,14 @@ def create_app(database_uri=None):
         Add an exercise to a workout with performance metrics (sets, reps, duration_seconds).
         Matches the path explicitly requested in the lab spec.
         """
-        workout = Workout.query.get(workout_id)
+        workout = db.session.get(Workout, workout_id)
         if not workout:
             return jsonify({
                 "error": "Not Found",
                 "message": f"Workout with ID {workout_id} does not exist."
             }), 404
 
-        exercise = Exercise.query.get(exercise_id)
+        exercise = db.session.get(Exercise, exercise_id)
         if not exercise:
             return jsonify({
                 "error": "Not Found",
@@ -303,14 +303,14 @@ def create_app(database_uri=None):
                 "messages": err.messages
             }), 400
 
-        workout = Workout.query.get(validated_data['workout_id'])
+        workout = db.session.get(Workout, validated_data['workout_id'])
         if not workout:
             return jsonify({
                 "error": "Not Found",
                 "message": f"Workout with ID {validated_data['workout_id']} does not exist."
             }), 404
 
-        exercise = Exercise.query.get(validated_data['exercise_id'])
+        exercise = db.session.get(Exercise, validated_data['exercise_id'])
         if not exercise:
             return jsonify({
                 "error": "Not Found",
